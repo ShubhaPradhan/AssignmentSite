@@ -1,0 +1,38 @@
+export const assignment = [
+  {
+    id: 1,
+    title: "Assignment 1",
+    uploader: "Aryaman Shrestha",
+    description: "This is the first assignment",
+    image: "",
+    type: "Lab Report",
+    subject: "Numerical Methods",
+  },
+  {
+    id: 2,
+    title: "Assignment 1",
+    uploader: "Aryaman Shrestha",
+    description: "This is the first assignment",
+    image: "",
+    type: "Lab Report",
+    subject: "Numerical Methods",
+  },
+  {
+    id: 3,
+    title: "Assignment 1",
+    uploader: "Aryaman Shrestha",
+    description: "This is the first assignment",
+    image: "",
+    type: "Lab Report",
+    subject: "Numerical Methods",
+  },
+  {
+    id: 4,
+    title: "Assignment 1",
+    uploader: "Aryaman Shrestha",
+    description: "This is the first assignment",
+    image: "",
+    type: "Lab Report",
+    subject: "Numerical Methods",
+  },
+];
