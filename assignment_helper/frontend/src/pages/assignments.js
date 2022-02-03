@@ -25,7 +25,7 @@ const Assignment = () => {
             </div>
           </div>
           <div className="right">
-            <img src="/images/assignmentbanner.svg" alt="banner" />
+            <img src="static/images/assignmentbanner.svg" alt="banner" />
           </div>
         </div>
 
@@ -86,7 +86,7 @@ const Assignment = () => {
                 <>
                   <a href="#/" className="card" key={id}>
                     <div className="image">
-                      <img src="/images/latestassignment.png" alt="" />
+                      <img src="static/images/latestassignment.png" alt="" />
                       <div className="pill">
                         <p>{type}</p>
                       </div>

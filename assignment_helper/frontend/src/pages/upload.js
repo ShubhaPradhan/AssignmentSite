@@ -10,7 +10,7 @@ const Upload = () => {
       <section className="upload-assignment">
         <div className="upload-container">
           <div className="upload-image">
-            <img src="/images/upload.svg" alt="" />
+            <img src="/static/images/upload.svg" alt="" />
           </div>
           <div className="upload-form">
             <h3 className="form-title">Upload Assignment</h3>

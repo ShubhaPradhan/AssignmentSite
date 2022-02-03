@@ -13,7 +13,7 @@ const Login = () => {
             transition={{ duration: 2 }}
             className="login-image"
           >
-            <img src="/images/login-3.gif"></img>
+            <img src="static/images/login-3.gif"></img>
           </motion.div>
 
           <motion.div

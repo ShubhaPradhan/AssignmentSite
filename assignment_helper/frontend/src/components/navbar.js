@@ -11,13 +11,11 @@ export const Nav = () => {
 
   //Javascript split method to get the name of the path in array
   const splitLocation = pathname.split("/");
-
-  console.log(splitLocation);
-
+  if (window.location.pathname === "/login") return null;
   return (
     <header>
       <div className="nav-logo">
-        <img src="/images/logo.png" alt="" className="logo" />
+        <img src="static/images/logo.png" alt="" className="logo" />
       </div>
       <nav>
         <ul className="nav-items">
