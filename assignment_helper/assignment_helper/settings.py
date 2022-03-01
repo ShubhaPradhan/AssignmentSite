@@ -42,8 +42,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'api.apps.ApiConfig',
     'frontend.apps.FrontendConfig',
-    'users.apps.UsersConfig',
 ]
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+  
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+   
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -131,13 +139,3 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # DEFAULT USER LOCATION (LOCATION OF THE APP WHERE USER RESIDES)
-AUTH_USER_MODEL = 'users.User'
-
-REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER ': 'users.serializers.UserSerializer', 
-}
-
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
-}
-
