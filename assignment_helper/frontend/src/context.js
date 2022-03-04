@@ -5,6 +5,9 @@ const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [registeremail, setRegisterEmail] = useState("");
+  const [registerpassword, setRegisterPassword] = useState("");
+  const [registerFullName, setRegisterFullName] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [iserror, setIsError] = useState(false);
   const [issuccess, setIsSuccess] = useState(false);
@@ -16,6 +19,12 @@ const AppProvider = ({ children }) => {
   return (
     <AppContext.Provider
       value={{
+        registeremail,
+        setRegisterEmail,
+        registerpassword,
+        setRegisterPassword,
+        registerFullName,
+        setRegisterFullName,
         email,
         password,
         setEmail,

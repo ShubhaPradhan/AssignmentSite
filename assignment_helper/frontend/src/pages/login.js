@@ -6,6 +6,12 @@ import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const {
+    registeremail,
+    setRegisterEmail,
+    registerpassword,
+    setRegisterPassword,
+    registerFullName,
+    setRegisterFullName,
     email,
     password,
     message,
@@ -27,6 +33,27 @@ const Login = () => {
 
   const handlePassword = (e) => {
     setPassword(e.target.value);
+  };
+
+  const handleUserRegistration = (e) => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        full_name: full_name,
+      }),
+    };
+    fetch("/api/users/", requestOptions).then((response) => {
+      if (response.ok) {
+        setMessage("Account created successfully");
+        setIsSuccess(true);
+      } else {
+        setMessage("Invalid email or password");
+        setIsError(true);
+      }
+    });
   };
 
   const handleUserLogin = (e) => {
@@ -51,7 +78,7 @@ const Login = () => {
     });
   };
 
-  const [formValue, setFormValue] = useState("signin");
+  const [formValue, setFormValue] = useState("login");
 
   return (
     <>
@@ -70,7 +97,12 @@ const Login = () => {
             transition={{ duration: 2 }}
             className="login-form"
           >
-            <form method="POST">
+            <form
+              method="POST"
+              onSubmit={
+                formValue === "login" ? handleUserLogin : handleUserRegistration
+              }
+            >
               {iserror ? <div className="messages">{message}</div> : null}
               <h3
                 className="form-title"
@@ -113,7 +145,6 @@ const Login = () => {
                   style={{ display: formValue === "login" ? "block" : "none" }}
                   type="submit"
                   className="primary"
-                  onClick={handleUserLogin}
                 >
                   <div className="overlay"></div>
                   <span>Login</span>
@@ -140,7 +171,7 @@ const Login = () => {
                 style={{ display: formValue === "login" ? "block" : "none" }}
                 className="bottom-text"
                 onClick={() => {
-                  setFormValue("signin");
+                  setFormValue("signup");
                 }}
               >
                 Not registered yet? <span>Sign Up!</span>

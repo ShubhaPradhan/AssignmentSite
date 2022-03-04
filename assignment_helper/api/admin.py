@@ -5,8 +5,8 @@ from .models import *
 # Register your models here.
 
 class UserAdmin(admin.ModelAdmin):
-    fields = ['email', 'name', 'is_staff', 'is_superuser']
-    list_display = ('email', 'name')
+    fields = ['email', 'full_name','password', 'is_staff', 'is_superuser']
+    list_display = ('email', 'full_name')
 
 admin.site.register(User, UserAdmin)
 
