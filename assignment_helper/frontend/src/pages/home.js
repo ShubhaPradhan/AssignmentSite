@@ -1,11 +1,13 @@
 import React from "react";
+import { useGlobalContext } from "../context";
 
 const Home = () => {
+  const { user } = useGlobalContext();
   return (
     <section className="landing-info">
       <div className="container">
         <div className="info">
-          <h3 className="title">Quick Assignments</h3>
+          <h3 className="title">{user}</h3>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit est
             fugiat omnis rerum a laborum reprehenderit dignissimos.

@@ -1,9 +1,58 @@
 import React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useGlobalContext } from "../context";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
+  const {
+    email,
+    password,
+    message,
+    setEmail,
+    setPassword,
+    setIsAuthenticated,
+    setIsError,
+    setIsSuccess,
+    issuccess,
+    iserror,
+    setMessage,
+  } = useGlobalContext();
+
+  let navigate = useNavigate();
+
+  const handleEmail = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleUserLogin = (e) => {
+    e.preventDefault();
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    };
+    fetch("/api/token/", requestOptions).then((response) => {
+      if (response.ok) {
+        setIsAuthenticated(true);
+        navigate(`/upload-assignment`);
+      } else {
+        setIsAuthenticated(false);
+        setMessage("Invalid email or password");
+        setIsError(true);
+      }
+    });
+  };
+
   const [formValue, setFormValue] = useState("signin");
+
   return (
     <>
       <section className="login">
@@ -21,7 +70,8 @@ const Login = () => {
             transition={{ duration: 2 }}
             className="login-form"
           >
-            <form action="">
+            <form method="POST">
+              {iserror ? <div className="messages">{message}</div> : null}
               <h3
                 className="form-title"
                 style={{ display: formValue === "login" ? "block" : "none" }}
@@ -35,13 +85,25 @@ const Login = () => {
                 Sign Up !
               </h3>
               <div className="input-field">
-                <input type="email" id="email" required />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  onChange={handleEmail}
+                />
                 <label htmlFor="Email" className="label">
                   Email
                 </label>
               </div>
               <div className="input-field">
-                <input type="password" id="password" required />
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  required
+                  onChange={handlePassword}
+                />
                 <label htmlFor="password" className="label">
                   Password
                 </label>
@@ -51,9 +113,7 @@ const Login = () => {
                   style={{ display: formValue === "login" ? "block" : "none" }}
                   type="submit"
                   className="primary"
-                  onClick={() => {
-                    setFormValue("login");
-                  }}
+                  onClick={handleUserLogin}
                 >
                   <div className="overlay"></div>
                   <span>Login</span>
@@ -62,9 +122,6 @@ const Login = () => {
                   style={{ display: formValue === "signin" ? "block" : "none" }}
                   type="submit"
                   className="alternate"
-                  onClick={() => {
-                    setFormValue("signin");
-                  }}
                 >
                   <div className="overlay"></div>
                   <span>Sign Up</span>

@@ -128,6 +128,17 @@ header nav a {
   font-weight: 600;
 }
 
+/* SUCCES AND ERROR MESSAGES */
+.messages {
+  position: absolute;
+  top: 2%;
+  left: 30%;
+  transform: translate(-2%, -30%);
+  background: var(--black);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+}
+/* SUCCES AND ERROR MESSAGES */
 /* ASSIGNMENT PAGE */
 .assignment h1 {
   font-size: 2.7rem;

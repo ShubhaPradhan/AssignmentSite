@@ -1,17 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useGlobalContext } from "../context";
 
 export const Nav = () => {
-  //assigning location variable
   const location = useLocation();
-
-  //destructuring pathname from location
+  const { isAuthenticated, setIsAuthenticated } = useGlobalContext();
   const { pathname } = location;
-
-  //Javascript split method to get the name of the path in array
   const splitLocation = pathname.split("/");
+
   if (window.location.pathname === "/login") return null;
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+  };
+
   return (
     <header>
       <div className="nav-logo">
@@ -45,7 +48,13 @@ export const Nav = () => {
               splitLocation[1] === "login" ? "active nav-link" : "nav-link"
             }
           >
-            <Link to="/login">Login</Link>
+            {isAuthenticated ? (
+              <Link to="/login" onClick={handleLogout}>
+                Logout
+              </Link>
+            ) : (
+              <Link to="/login">Login</Link>
+            )}
           </li>
         </ul>
       </nav>
