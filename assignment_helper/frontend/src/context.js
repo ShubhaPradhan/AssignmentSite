@@ -9,9 +9,6 @@ const AppProvider = ({ children }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [iserror, setIsError] = useState(false);
-  const [issuccess, setIsSuccess] = useState(false);
-  const [message, setMessage] = useState("");
   const [token, setToken] = useState(
     localStorage.getItem("token")
       ? JSON.parse(localStorage.getItem("token"))
@@ -23,6 +20,14 @@ const AppProvider = ({ children }) => {
       : null
   );
   const [isloading, setIsLoading] = useState(false);
+  const [iserror, setIsError] = useState(false);
+  const [issuccess, setIsSuccess] = useState(false);
+  const [message, setMessage] = useState("");
+  const [assignmentTitle, setAssignmentTitle] = useState("");
+  const [assignmentType, setAssignmentType] = useState("");
+  const [assignmentFile, setAssignmentFile] = useState("");
+  const [assignmentSubject, setAssignmentSubject] = useState("");
+  const [assignmentdescription, setAssignmentDescription] = useState("");
 
   let navigate = useNavigate();
 
@@ -122,6 +127,40 @@ const AppProvider = ({ children }) => {
       });
   };
 
+  const createAssignment = (e) => {
+    e.preventDefault();
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token.access}`,
+      },
+      body: JSON.stringify({
+        user: user.user_id,
+        username: user.full_name,
+        title: assignmentTitle,
+        subject: assignmentSubject,
+        assignment_type: assignmentType,
+        assignment_file: assignmentFile,
+        description: assignmentdescription,
+      }),
+    };
+    fetch("/api/create-assignments/", requestOptions)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          setMessage("All fields are required");
+          setIsError(true);
+        }
+      })
+      .then((data) => {
+        setMessage("Assignment created successfully");
+        setIsSuccess(true);
+      });
+  };
+
   useEffect(() => {
     const fourMinutes = 1000 * 60 * 4;
     const interval = setInterval(() => {
@@ -143,11 +182,23 @@ const AppProvider = ({ children }) => {
         handleFullName,
         handleEmail,
         handlePassword,
-        message,
         token,
+        user,
         issuccess,
         iserror,
-        user,
+        message,
+        isloading,
+        assignmentTitle,
+        assignmentType,
+        assignmentFile,
+        assignmentSubject,
+        assignmentdescription,
+        setAssignmentTitle,
+        setAssignmentType,
+        setAssignmentFile,
+        setAssignmentSubject,
+        setAssignmentDescription,
+        createAssignment,
       }}
     >
       {children}

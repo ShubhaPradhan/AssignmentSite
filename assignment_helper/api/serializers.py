@@ -20,7 +20,4 @@ class UserSerializer(serializers.ModelSerializer):
 class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
-        fields = ['user', 'title', 'subject', 'assignment_type', 'assignment_file', 'description', 'created_at']
-
-    def create(self, validated_data):
-        return Assignment.objects.create(**validated_data)
+        fields = ['user','username','title', 'subject', 'assignment_type', 'assignment_file', 'description']

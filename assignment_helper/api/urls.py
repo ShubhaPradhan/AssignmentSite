@@ -9,5 +9,5 @@ urlpatterns = [
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/', CreateUserView.as_view(), name='create_user'),
-    path('assignments/', CreateAssignmentView.as_view(), name='create_assignment'),
+    path('create-assignments/', CreateAssignmentView.as_view(), name='create_assignment'),
 ]

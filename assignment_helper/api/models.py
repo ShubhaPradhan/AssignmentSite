@@ -55,7 +55,7 @@ class Assignment(models.Model):
     # BOTH CHOICES WILL EVENTUALLY COME FROM ADMIN
     # SUBJECTS
     Statistics = 'statistics'
-    Numerical_Method = 'NM'
+    Numerical_Method = 'numerical method'
     subject_choices = [
         (Statistics,'statistics'),
         (Numerical_Method,'numerical method'), 
@@ -69,6 +69,7 @@ class Assignment(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=255, default=user)
     title = models.CharField(max_length=20)
     subject = models.CharField(max_length=20, choices=subject_choices, default=Statistics)
     assignment_type = models.CharField(max_length=20, choices=assignment_choices, default=Assignment)
@@ -78,4 +79,5 @@ class Assignment(models.Model):
 
     def __str__(self):
         return self.title
+        
 
