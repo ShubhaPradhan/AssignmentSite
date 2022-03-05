@@ -3,9 +3,8 @@ import { useGlobalContext } from "../context";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 
 const Upload = () => {
-  const { isAuthenticated } = useGlobalContext();
-  console.log(isAuthenticated);
-  if (!isAuthenticated) {
+  const { user } = useGlobalContext();
+  if (!user) {
     return <Navigate to={`/login`} replace />;
   } else {
     return (
@@ -22,12 +21,6 @@ const Upload = () => {
                   <input type="text" id="title" />
                   <label htmlFor="title" className="label">
                     Assignment Title
-                  </label>
-                </div>
-                <div className="input-field">
-                  <input type="text" id="uploaderName" />
-                  <label htmlFor="uploaderName" className="label">
-                    Uploader Name
                   </label>
                 </div>
                 <div className="input-field">

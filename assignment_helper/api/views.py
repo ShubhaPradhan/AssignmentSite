@@ -3,11 +3,10 @@ from .models import *
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework import generics, status
+from rest_framework import status
 from .serializers import *
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -16,7 +15,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Add custom claims
         token['email'] = User.email
-        token['name'] = User.name
+        token['full_name'] = User.full_name
         # ...
 
         return token
@@ -29,6 +28,7 @@ def getRoutes(request):
     routes = [
         '/api/token',
         '/api/token/refresh',
+        '/api/users',
     ]
 
     return Response(routes)
@@ -39,12 +39,28 @@ class CreateUserView(APIView):
 
     def post(self, request, format=None):
         user = request.data
+        queryset = User.objects.filter(email=user['email'])
+        if queryset.exists():
+            return Response({ "Bad Request": "Email is already used."},status=status.HTTP_409_CONFLICT)
         serializer = self.serializer_class(data = user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         user_data = serializer.data
 
         return Response(user_data, status=status.HTTP_201_CREATED)
+
+class CreateAssignmentView(APIView):
+
+    serializer_class = AssignmentSerializer
+
+    def post(self, request, format=None):
+        assignment = request.data
+        serializer = self.serializer_class(data = assignment)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        assignment_data = serializer.data
+
+        return Response(assignment_data, status=status.HTTP_201_CREATED)
     
 
 

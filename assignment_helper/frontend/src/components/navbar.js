@@ -5,15 +5,11 @@ import { useGlobalContext } from "../context";
 
 export const Nav = () => {
   const location = useLocation();
-  const { isAuthenticated, setIsAuthenticated } = useGlobalContext();
+  const { user, handleLogout } = useGlobalContext();
   const { pathname } = location;
   const splitLocation = pathname.split("/");
 
   if (window.location.pathname === "/login") return null;
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-  };
 
   return (
     <header>
@@ -48,7 +44,7 @@ export const Nav = () => {
               splitLocation[1] === "login" ? "active nav-link" : "nav-link"
             }
           >
-            {isAuthenticated ? (
+            {user ? (
               <Link to="/login" onClick={handleLogout}>
                 Logout
               </Link>

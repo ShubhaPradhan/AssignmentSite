@@ -2,120 +2,74 @@ import React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useGlobalContext } from "../context";
-import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const {
-    registeremail,
-    setRegisterEmail,
-    registerpassword,
-    setRegisterPassword,
-    registerFullName,
-    setRegisterFullName,
-    email,
-    password,
+    handleUserLogin,
+    handleUserRegistration,
+    handleFullName,
+    handleEmail,
+    handlePassword,
     message,
-    setEmail,
-    setPassword,
-    setIsAuthenticated,
-    setIsError,
-    setIsSuccess,
     issuccess,
     iserror,
-    setMessage,
   } = useGlobalContext();
 
-  let navigate = useNavigate();
-
-  const handleEmail = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleUserRegistration = (e) => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        full_name: full_name,
-      }),
-    };
-    fetch("/api/users/", requestOptions).then((response) => {
-      if (response.ok) {
-        setMessage("Account created successfully");
-        setIsSuccess(true);
-      } else {
-        setMessage("Invalid email or password");
-        setIsError(true);
-      }
-    });
-  };
-
-  const handleUserLogin = (e) => {
-    e.preventDefault();
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    };
-    fetch("/api/token/", requestOptions).then((response) => {
-      if (response.ok) {
-        setIsAuthenticated(true);
-        navigate(`/upload-assignment`);
-      } else {
-        setIsAuthenticated(false);
-        setMessage("Invalid email or password");
-        setIsError(true);
-      }
-    });
-  };
-
-  const [formValue, setFormValue] = useState("login");
+  const [formValue, setFormValue] = useState("signin");
 
   return (
     <>
       <section className="login">
         <div className="login-container">
           <motion.div
-            animate={formValue === "login" ? { x: 0 } : { x: "100%" }}
-            transition={{ duration: 2 }}
+            animate={formValue === "register" ? { x: 0 } : { x: "100%" }}
+            transition={{ duration: 0.5 }}
             className="login-image"
           >
             <img src="static/images/login-3.gif"></img>
           </motion.div>
 
           <motion.div
-            animate={formValue === "login" ? { x: 0 } : { x: "-100%" }}
-            transition={{ duration: 2 }}
+            animate={formValue === "register" ? { x: 0 } : { x: "-100%" }}
+            transition={{ duration: 0.5 }}
             className="login-form"
           >
             <form
               method="POST"
               onSubmit={
-                formValue === "login" ? handleUserLogin : handleUserRegistration
+                formValue === "register"
+                  ? handleUserRegistration
+                  : handleUserLogin
               }
             >
               {iserror ? <div className="messages">{message}</div> : null}
+              {issuccess ? <div className="messages">{message}</div> : null}
               <h3
                 className="form-title"
-                style={{ display: formValue === "login" ? "block" : "none" }}
+                style={{ display: formValue === "register" ? "block" : "none" }}
               >
-                Login !
+                Register !
               </h3>
               <h3
                 className="form-title"
                 style={{ display: formValue === "signin" ? "block" : "none" }}
               >
-                Sign Up !
+                Sign In !
               </h3>
+              {formValue === "register" ? (
+                <div className="input-field">
+                  <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    required
+                    onChange={handleFullName}
+                  />
+                  <label htmlFor="full_name" className="label">
+                    Full Name
+                  </label>
+                </div>
+              ) : null}
               <div className="input-field">
                 <input
                   type="email"
@@ -142,39 +96,43 @@ const Login = () => {
               </div>
               <div className="buttons">
                 <button
-                  style={{ display: formValue === "login" ? "block" : "none" }}
+                  style={{
+                    display: formValue === "register" ? "block" : "none",
+                  }}
                   type="submit"
                   className="primary"
                 >
                   <div className="overlay"></div>
-                  <span>Login</span>
+                  <span>Register</span>
                 </button>
                 <button
-                  style={{ display: formValue === "signin" ? "block" : "none" }}
+                  style={{
+                    display: formValue === "signin" ? "block" : "none",
+                  }}
                   type="submit"
                   className="alternate"
                 >
                   <div className="overlay"></div>
-                  <span>Sign Up</span>
+                  <span>Login</span>
                 </button>
               </div>
               <p
                 style={{ display: formValue === "signin" ? "block" : "none" }}
                 className="bottom-text"
                 onClick={() => {
-                  setFormValue("login");
-                }}
-              >
-                Already have an account? <span>Sign In!</span>
-              </p>
-              <p
-                style={{ display: formValue === "login" ? "block" : "none" }}
-                className="bottom-text"
-                onClick={() => {
-                  setFormValue("signup");
+                  setFormValue("register");
                 }}
               >
                 Not registered yet? <span>Sign Up!</span>
+              </p>
+              <p
+                style={{ display: formValue === "register" ? "block" : "none" }}
+                className="bottom-text"
+                onClick={() => {
+                  setFormValue("signin");
+                }}
+              >
+                Already have an account? <span>Sign In!</span>
               </p>
             </form>
           </motion.div>
