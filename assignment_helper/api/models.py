@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.contrib.auth.hashers import make_password
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -51,6 +52,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+def upload_to(instance, filename):
+    return 'assignments/{filename}'.format(filename=filename)
+
 class Assignment(models.Model):
     # BOTH CHOICES WILL EVENTUALLY COME FROM ADMIN
     # SUBJECTS
@@ -68,13 +72,13 @@ class Assignment(models.Model):
         (Lab,'lab'), 
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assignments')
     username = models.CharField(max_length=255, default=user)
-    title = models.CharField(max_length=20)
-    subject = models.CharField(max_length=20, choices=subject_choices, default=Statistics)
-    assignment_type = models.CharField(max_length=20, choices=assignment_choices, default=Assignment)
-    assignment_file = models.FileField()
-    description = models.CharField(max_length=50)
+    title = models.CharField(max_length=20, blank=False, null=False)
+    subject = models.CharField(max_length=20, choices=subject_choices, default=Statistics, blank=False)
+    assignment_type = models.CharField(max_length=20, choices=assignment_choices, default=Assignment, blank=False)
+    assignment_file = models.ImageField(_("Image"),upload_to=upload_to,default="", blank=False, null=False)
+    description = models.CharField(max_length=50, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

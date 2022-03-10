@@ -24,7 +24,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-@api_view(['GET'])
+@api_view(['GET', 'POST', 'PUT'])
 def getRoutes(request):
     routes = [
         '/api/token',
@@ -36,7 +36,7 @@ def getRoutes(request):
     return Response(routes)
 
 class CreateUserView(APIView):
-
+    
     serializer_class = UserSerializer
 
     def post(self, request, format=None):
@@ -54,18 +54,16 @@ class CreateUserView(APIView):
 class CreateAssignmentView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = AssignmentSerializer
-
     def post(self, request, format=None):
-        
         assignment = request.data
         serializer = self.serializer_class(data = assignment)
+        print(serializer)
+        print(serializer.error_messages)
         if serializer.is_valid():
-            print(serializer.validated_data)
+            print("valid")
             serializer.save()
             assignment_data = serializer.data
             return Response(assignment_data, status=status.HTTP_201_CREATED)
-
-        print(serializer.errors)
         
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
     

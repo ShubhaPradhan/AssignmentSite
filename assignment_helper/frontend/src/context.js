@@ -129,22 +129,23 @@ const AppProvider = ({ children }) => {
 
   const createAssignment = (e) => {
     e.preventDefault();
+    let formData = new FormData();
+    console.log()
+    const data = {
+      user : user.user_id,
+      username : user.full_name,
+      title : assignmentTitle,
+      subject : assignmentSubject,
+      assignment_type : assignmentType,
+      assignment_file : assignmentFile[0].name + " " + "(" + assignmentFile[0].type + ")",
+      description : assignmentdescription,
+    }
+    formData.append("data", JSON.stringify(data));
+    console.log(formData.get("data"));
     const requestOptions = {
+      mode: 'no-cors',
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token.access}`,
-      },
-      body: JSON.stringify({
-        user: user.user_id,
-        username: user.full_name,
-        title: assignmentTitle,
-        subject: assignmentSubject,
-        assignment_type: assignmentType,
-        assignment_file: assignmentFile,
-        description: assignmentdescription,
-      }),
+      body: formData,
     };
     fetch("/api/create-assignments/", requestOptions)
       .then((response) => {

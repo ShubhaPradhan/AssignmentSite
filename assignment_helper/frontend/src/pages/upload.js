@@ -22,7 +22,7 @@ const Upload = () => {
   };
 
   const handleAssignmentFile = (e) => {
-    setAssignmentFile(e.target.value);
+    setAssignmentFile(e.target.files);
   };
 
   const handleAssignmentSubject = (e) => {
@@ -45,7 +45,7 @@ const Upload = () => {
             </div>
             <div className="upload-form">
               <h3 className="form-title">Upload Assignment</h3>
-              <form onSubmit={createAssignment} method="post">
+              <form onSubmit={createAssignment} method="POST" encType="multipart/form-data">
                 <div className="input-field">
                   <input
                     type="text"
@@ -88,7 +88,7 @@ const Upload = () => {
                   <input
                     type="file"
                     id="file"
-                    accept=".doc, .docx, .pdf, .txt"
+                    accept=".doc, .docx, .pdf, .txt, .jpeg, .png, .jpg"
                     onChange={handleAssignmentFile}
                   />
                   <label htmlFor="file" className="label">
