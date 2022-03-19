@@ -53,7 +53,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 def upload_to(instance, filename):
-    return 'assignments/{filename}'.format(filename=filename)
+    print("Shubha")
+    return 'assignments/{filename}'
 
 class Assignment(models.Model):
     # BOTH CHOICES WILL EVENTUALLY COME FROM ADMIN
@@ -77,7 +78,7 @@ class Assignment(models.Model):
     title = models.CharField(max_length=20, blank=False, null=False)
     subject = models.CharField(max_length=20, choices=subject_choices, default=Statistics, blank=False)
     assignment_type = models.CharField(max_length=20, choices=assignment_choices, default=Assignment, blank=False)
-    assignment_file = models.ImageField(_("Image"),upload_to=upload_to,default="", blank=False, null=False)
+    assignment_file = models.FileField(upload_to="assignments/", blank=False, null=False)
     description = models.CharField(max_length=50, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

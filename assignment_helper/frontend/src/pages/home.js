@@ -1,6 +1,8 @@
 import React from "react";
 import { useGlobalContext } from "../context";
 
+import { Link } from "react-router-dom";
+
 const Home = () => {
   return (
     <section className="landing-info">
@@ -18,14 +20,18 @@ const Home = () => {
             dignissimos.
           </p>
           <div className="buttons">
-            <button href="/assignments" className="primary">
+            <Link to="/assignment">
+              <button className="primary">
               <div className="overlay"></div>
               <span>Assignments</span>
-            </button>
-            <button href="/assignments" className="alternate">
+              </button>
+            </Link>
+            <Link to="/upload-assignment">
+              <button className="alternate">
               <div className="overlay"></div>
               <span>Contribute</span>
-            </button>
+              </button>
+            </Link>
           </div>
         </div>
         <div className="image">

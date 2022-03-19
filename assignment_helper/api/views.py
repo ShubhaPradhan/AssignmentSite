@@ -7,7 +7,7 @@ from rest_framework import status
 from .serializers import *
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import FileUploadParser, MultiPartParser
 # Create your views here.
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -31,6 +31,8 @@ def getRoutes(request):
         '/api/token/refresh',
         '/api/users',
         '/api/create-assignments',
+        '/api/assignments',
+        '/api/update-assignments/<int:pk>',
     ]
 
     return Response(routes)
@@ -52,18 +54,49 @@ class CreateUserView(APIView):
         return Response(user_data, status=status.HTTP_201_CREATED)
 
 class CreateAssignmentView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
-    serializer_class = AssignmentSerializer
-    def post(self, request, format=None):
-        assignment = request.data
-        serializer = self.serializer_class(data = assignment)
-        print(serializer)
-        print(serializer.error_messages)
-        if serializer.is_valid():
-            print("valid")
-            serializer.save()
-            assignment_data = serializer.data
-            return Response(assignment_data, status=status.HTTP_201_CREATED)
-        
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+    parser_classes = (MultiPartParser, FileUploadParser)
     
+    queryset = Assignment.objects.all()
+    serializer_class = AssignmentSerializer
+
+    def post(self, request, format=None):
+        user = User.objects.get(id=request.data['user'])
+        username = request.data['username']
+        title = request.data['title']
+        subject = request.data['subject']
+        assignment_type = request.data['assignment_type']
+        assignment_file = request.data['assignment_file']
+        description = request.data['description']
+
+        assignment = Assignment(user=user, username=username, title=title, subject=subject, assignment_type=assignment_type, assignment_file=assignment_file, description=description)
+        serializer = self.serializer_class(assignment)
+        print(serializer.data)
+        assignment.save()     
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class AssignmentsView(APIView):
+    
+    serializer_class = AssignmentSerializer
+
+    def get(self, request, format=None):
+        queryset = Assignment.objects.all()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+class UpdateAssignmentView(APIView):
+
+    serializer_class = AssignmentSerializer
+
+    def put(self, request, pk, format=None):
+        assignment = Assignment.objects.get(pk=pk)
+        if assignment.user.id != int(request.data['user']):
+            print(request.data)
+            return Response({ "Bad Request": "User is not the same."},status=status.HTTP_409_CONFLICT)
+
+        serializer = self.serializer_class(assignment, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+           

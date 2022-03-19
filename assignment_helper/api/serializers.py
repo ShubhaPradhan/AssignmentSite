@@ -20,5 +20,4 @@ class UserSerializer(serializers.ModelSerializer):
 class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
-        print(model)
-        fields = ('user','username','title', 'subject', 'assignment_type', 'assignment_file', 'description')
+        fields = ('id','user','username','title', 'subject', 'assignment_type', 'assignment_file', 'description')

@@ -1,8 +1,21 @@
 import React from "react";
 import { FaSearch } from "react-icons/fa";
-import { assignment } from "../data";
+import { Link } from "react-router-dom";
+
+import { useState } from "react";
+
+import { useGlobalContext } from "../context";
 
 const Assignment = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortByType, setSortByType] = useState("");
+  const [sortBySubject, setSortBySubject] = useState("");
+
+  const { user, assignment, updateAssignment } = useGlobalContext();
+
+  // BECAUSE VAR_NAME IS CONFLICTING BELOW
+  const userId = user.user_id;
+
   return (
     <section className="assignment main">
       {/* BANNER */}
@@ -18,10 +31,12 @@ const Assignment = () => {
                 Cupiditate vitae neque labore eveniet sapiente officiis qui
                 fuga. Optio, perspiciatis eligendi.
               </p>
+              <Link to="/upload-assignment">
               <button className="primary">
                 <div className="overlay"></div>
                 <span>Contribute</span>
               </button>
+              </Link>
             </div>
           </div>
           <div className="right">
@@ -36,38 +51,43 @@ const Assignment = () => {
               <span className="icon"></span>
               <input
                 type="text"
-                name="search"
+                id="search"
+                onChange={(e) => {
+                  setSortByType("");
+                  setSortBySubject("");
+                  setSearchTerm(e.target.value)
+                }
+                }
                 placeholder="Search Assignments"
               />
               <FaSearch className="search-icon"></FaSearch>
             </div>
             <div className="divider"></div>
-            <div className="labsheet">
-              <select name="labsheet" id="labsheet">
-                <option value="">Lab Sheet</option>
-                <option value="Theory of Computation">
-                  Theory of Computation
-                </option>
-                <option value="Computer Networks">Computer Networks</option>
-                <option value="Operating Systems">Operating Systems</option>
-                <option value="DBMS">DBMS</option>
-                <option value="Artificial Intelligence">
-                  Artificial Intelligence
-                </option>
+            <div className="assignment-type">
+              <select 
+              name="assignment_type" 
+              id="assignment_type" 
+              onChange={(e) => {
+                setSearchTerm("");
+                setSortBySubject("");
+              setSortByType(e.target.value)}
+              }>
+                <option value="">Sort By Type</option>
+                <option value="assignment">Assignment</option>
+                <option value="lab">Lab</option>
               </select>
+
             </div>
             <div className="subject">
-              <select name="labsheet" id="labsheet">
+              <select name="subject" id="subject" onChange={(e) => {
+                setSearchTerm("");
+                setSortByType("");
+                setSortBySubject(e.target.value)}
+              }
+              >
                 <option value="">Sort By Subject</option>
-                <option value="Theory of Computation">
-                  Theory of Computation
-                </option>
-                <option value="Computer Networks">Computer Networks</option>
-                <option value="Operating Systems">Operating Systems</option>
-                <option value="DBMS">DBMS</option>
-                <option value="Artificial Intelligence">
-                  Artificial Intelligence
-                </option>
+                <option value="Statistics">Statistics</option>
+                <option value="Numerical Method">Numerical Method</option>
               </select>
             </div>
           </form>
@@ -80,38 +100,65 @@ const Assignment = () => {
         <h2 className="sub-heading">Latest Assignments & Labs : </h2>
         <div className="content">
           <div className="row">
-            {assignment.map((item, index) => {
-              const { id, title, subject, uploader, image, type } = item;
+          {
+            assignment.filter((value) => {
+              if(searchTerm === "" && sortByType === "" && sortBySubject === ""){
+                return value;
+              }
+              if(searchTerm !== ""){
+                return value.title.toLowerCase().includes(searchTerm.toLowerCase());
+              } 
+              else if(sortByType !== ""){
+                return value.assignment_type.toLowerCase().includes(sortByType.toLowerCase());
+              }
+              else if(setSortBySubject !== ""){
+                return value.subject.toLowerCase().includes(sortBySubject.toLowerCase());
+              }
+            }).map((item) => {
+          
+              const { user, id,  username, title, subject, assignment_type, assignment_file, description } = item;
+
               return (
-                <>
-                  <a href="#/" className="card" key={id}>
+          
+                  <div className="card" key={id}>
                     <div className="image">
                       <img src="static/images/latestassignment.png" alt="" />
                       <div className="pill">
-                        <p>{type}</p>
+                        <p>{assignment_type}</p>
                       </div>
                     </div>
                     <div className="lower">
                       <div className="info">
                         <p>{title}</p>
                         <p>{subject}</p>
-                        <p>By {uploader}</p>
+                        <p>{description}</p>
+                        <p>By {username}</p>
                       </div>
                       <div className="buttons">
-                        <button href="/assignments" className="primary">
-                          <div className="overlay"></div>
-                          <span>View</span>
-                        </button>
-                        <button href="/assignments" className="alternate">
+                        <a href={assignment_file}>
+                          <button className="primary">
+                            <div className="overlay"></div>
+                            <span>View</span>
+                          </button>
+                      </a>
+                        <a href={assignment_file} className="alternate" download>
                           <div className="overlay"></div>
                           <span>Download</span>
-                        </button>
+                        </a>
+                    { user === userId ?  <Link to={`/update-assignment/${id}`}>
+                          <button className="primary">
+                            <div className="overlay"></div>
+                            <span>Update</span>
+                          </button>
+                        </Link>: null
+                    }
                       </div>
                     </div>
-                  </a>
-                </>
+                  </div>
+             
               );
-            })}
+            }).reverse()
+         }
           </div>
         </div>
       </div>

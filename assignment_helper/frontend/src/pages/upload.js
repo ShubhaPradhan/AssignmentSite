@@ -45,7 +45,7 @@ const Upload = () => {
             </div>
             <div className="upload-form">
               <h3 className="form-title">Upload Assignment</h3>
-              <form onSubmit={createAssignment} method="POST" encType="multipart/form-data">
+              <form onSubmit={createAssignment}  encType="multipart/form-data">
                 <div className="input-field">
                   <input
                     type="text"
@@ -62,6 +62,7 @@ const Upload = () => {
                     id="subject_choices"
                     onChange={handleAssignmentSubject}
                   >
+                    <option value="">Select Subject</option>
                     <option value="statistics">Statistics</option>
                     <option value="numerical method">Numerical Method</option>
                   </select>
@@ -76,6 +77,7 @@ const Upload = () => {
                     id="assignment_choices"
                     onChange={handleAssignmentType}
                   >
+                   <option value="">Select Subject Type</option>
                     <option value="assignment">Assignment</option>
                     <option value="lab">Lab</option>
                   </select>

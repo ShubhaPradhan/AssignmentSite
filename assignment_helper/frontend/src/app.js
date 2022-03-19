@@ -6,7 +6,7 @@ import Assignment from "./pages/assignments";
 import Upload from "./pages/upload";
 import Login from "./pages/login";
 import { AppProvider } from "./context";
-import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+import { Routes, Route, BrowserRouter as Router, Link } from "react-router-dom";
 
 const App = () => {
   return (
@@ -20,6 +20,7 @@ const App = () => {
             <Route path="/assignment" element={<Assignment />}></Route>
             <Route path="/upload-assignment" element={<Upload />}></Route>
             <Route path="/login" element={<Login />}></Route>
+            <Route path="/update-assignment/:id" element={<Upload />}></Route>
           </Routes>
 
           <Footer></Footer>

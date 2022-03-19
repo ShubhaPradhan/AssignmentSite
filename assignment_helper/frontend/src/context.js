@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import jwt_decode from "jwt-decode";
 
+const axios = require('axios').default;
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
@@ -28,6 +29,9 @@ const AppProvider = ({ children }) => {
   const [assignmentFile, setAssignmentFile] = useState("");
   const [assignmentSubject, setAssignmentSubject] = useState("");
   const [assignmentdescription, setAssignmentDescription] = useState("");
+  const [assignment, setAssignment] = useState([]);
+
+  const { id } = useParams();
 
   let navigate = useNavigate();
 
@@ -129,38 +133,70 @@ const AppProvider = ({ children }) => {
 
   const createAssignment = (e) => {
     e.preventDefault();
-    let formData = new FormData();
-    console.log()
-    const data = {
-      user : user.user_id,
-      username : user.full_name,
-      title : assignmentTitle,
-      subject : assignmentSubject,
-      assignment_type : assignmentType,
-      assignment_file : assignmentFile[0].name + " " + "(" + assignmentFile[0].type + ")",
-      description : assignmentdescription,
-    }
-    formData.append("data", JSON.stringify(data));
-    console.log(formData.get("data"));
-    const requestOptions = {
-      mode: 'no-cors',
-      method: "POST",
-      body: formData,
-    };
-    fetch("/api/create-assignments/", requestOptions)
-      .then((response) => {
+    const uploadData = new FormData();
+    uploadData.append('user', user.user_id);
+    uploadData.append('username', user.full_name);
+    uploadData.append('title', assignmentTitle);
+    uploadData.append('subject', assignmentSubject);
+    uploadData.append('assignment_type', assignmentType);
+    uploadData.append('assignment_file', assignmentFile[0]);
+    uploadData.append('description', assignmentdescription);
+    axios.post("/api/create-assignments/", uploadData)
+    .then((response) => {
+        console.log(response);
         if (response.ok) {
+          setMessage("Assignment created successfully");
+          setIsSuccess(true);
           return response.json();
         } else {
           setMessage("All fields are required");
           setIsError(true);
         }
       })
+  };
+
+  const getAssignments = () => {
+    const requestOptions = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch("/api/assignments/", requestOptions)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
       .then((data) => {
-        setMessage("Assignment created successfully");
-        setIsSuccess(true);
+        setAssignment(data);
       });
   };
+
+  const updateAssignment = (e) => {
+    e.preventDefault();
+    const uploadData = new FormData();
+    uploadData.append('title', assignmentTitle);
+    uploadData.append('subject', assignmentSubject);
+    uploadData.append('assignment_type', assignmentType);
+    uploadData.append('assignment_file', assignmentFile[0]);
+    uploadData.append('description', assignmentdescription);
+    axios.post(`/api/update-assignments/${id}`, uploadData)
+    .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          setMessage("Assignment updated successfully");
+          setIsSuccess(true);
+          return response.json();
+        } else {
+          setMessage("All fields are required");
+          setIsError(true);
+        }
+      })
+  };
+
+
+  useEffect(() => {
+    getAssignments();
+  }, []);
 
   useEffect(() => {
     const fourMinutes = 1000 * 60 * 4;
@@ -200,6 +236,7 @@ const AppProvider = ({ children }) => {
         setAssignmentSubject,
         setAssignmentDescription,
         createAssignment,
+        assignment,
       }}
     >
       {children}

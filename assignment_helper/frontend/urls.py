@@ -8,4 +8,5 @@ urlpatterns = [
     path('assignment', index),
     path('upload-assignment', index),
     path('login', index),
+    path('update-assignment/<int:id>', index),
 ]
