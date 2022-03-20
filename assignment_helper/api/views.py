@@ -32,7 +32,9 @@ def getRoutes(request):
         '/api/users',
         '/api/create-assignments',
         '/api/assignments',
+        '/api/assignment/<int:pk>',
         '/api/update-assignments/<int:pk>',
+        '/api/delete-assignments/<int:pk>',
     ]
 
     return Response(routes)
@@ -83,20 +85,38 @@ class AssignmentsView(APIView):
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
+class AssignmentView(APIView):
+    
+    serializer_class = AssignmentSerializer
+
+    def get(self, request, pk, format=None):
+        queryset = Assignment.objects.get(id=pk)
+        serializer = self.serializer_class(queryset)
+        return Response(serializer.data)
+
 class UpdateAssignmentView(APIView):
 
     serializer_class = AssignmentSerializer
 
     def put(self, request, pk, format=None):
         assignment = Assignment.objects.get(pk=pk)
-        if assignment.user.id != int(request.data['user']):
-            print(request.data)
-            return Response({ "Bad Request": "User is not the same."},status=status.HTTP_409_CONFLICT)
 
-        serializer = self.serializer_class(assignment, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        if assignment.user.id == int(request.data['user']):
+            serializer = self.serializer_class(assignment, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({ "Bad Request": "User is not the same."},status=status.HTTP_409_CONFLICT)
+
+class DeleteAssignmentView(APIView):
+        
+    serializer_class = AssignmentSerializer
+
+    def delete(self, request, pk, format=None):
+        assignment = Assignment.objects.get(pk=pk)
+        assignment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
            

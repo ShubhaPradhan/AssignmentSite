@@ -14,7 +14,10 @@ const Assignment = () => {
   const { user, assignment, updateAssignment } = useGlobalContext();
 
   // BECAUSE VAR_NAME IS CONFLICTING BELOW
-  const userId = user.user_id;
+  let userId = "";
+  if(user){
+   userId = user.user_id;
+  }
 
   return (
     <section className="assignment main">
@@ -149,6 +152,13 @@ const Assignment = () => {
                           <button className="primary">
                             <div className="overlay"></div>
                             <span>Update</span>
+                          </button>
+                        </Link>: null
+                    }
+                      { user === userId ?  <Link to={`/delete-assignment/${id}`}>
+                          <button className="primary">
+                            <div className="overlay"></div>
+                            <span>Delete</span>
                           </button>
                         </Link>: null
                     }

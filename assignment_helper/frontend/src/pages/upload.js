@@ -1,17 +1,35 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { useGlobalContext } from "../context";
-import { useNavigate, Link, Navigate } from "react-router-dom";
+import {  Navigate } from "react-router-dom";
 
 const Upload = () => {
   const {
     user,
+    assignmentTitle,
     setAssignmentTitle,
+    assignmentType,
     setAssignmentType,
+    assignmentFile,
     setAssignmentFile,
+    assignmentSubject,
     setAssignmentSubject,
+    assignmentDescription,
     setAssignmentDescription,
     createAssignment,
+    updateAssignment,
+    getAssignmentData,
+    isUpdate, 
+    setIsUpdate,
   } = useGlobalContext();
+
+
+  
+  useEffect(() => {
+    if (window.location.pathname.includes("/update-assignment/")){
+      getAssignmentData();
+    };
+  }, []);
+
 
   const handleAssignmentTitle = (e) => {
     setAssignmentTitle(e.target.value);
@@ -33,6 +51,7 @@ const Upload = () => {
     setAssignmentDescription(e.target.value);
   };
 
+
   if (!user) {
     return <Navigate to={`/login`} replace />;
   } else {
@@ -45,12 +64,13 @@ const Upload = () => {
             </div>
             <div className="upload-form">
               <h3 className="form-title">Upload Assignment</h3>
-              <form onSubmit={createAssignment}  encType="multipart/form-data">
+              <form onSubmit={isUpdate ? updateAssignment : createAssignment}  encType="multipart/form-data">
                 <div className="input-field">
                   <input
                     type="text"
                     id="title"
                     onChange={handleAssignmentTitle}
+                    value={assignmentTitle}
                   />
                   <label htmlFor="title" className="label">
                     Assignment Title
@@ -61,6 +81,7 @@ const Upload = () => {
                     name="subject_choices"
                     id="subject_choices"
                     onChange={handleAssignmentSubject}
+                    value={assignmentSubject}
                   >
                     <option value="">Select Subject</option>
                     <option value="statistics">Statistics</option>
@@ -76,6 +97,7 @@ const Upload = () => {
                     name="assignment_choices"
                     id="assignment_choices"
                     onChange={handleAssignmentType}
+                    value={assignmentType}
                   >
                    <option value="">Select Subject Type</option>
                     <option value="assignment">Assignment</option>
@@ -105,14 +127,14 @@ const Upload = () => {
                     cols="20"
                     rows="10"
                     onChange={handleAssignmentDescription}
-                  ></textarea>
+                  >{assignmentDescription}</textarea>
                   <label htmlFor="description" className="label">
                     Description
                   </label>
                 </div>
                 <button className="primary" type="submit">
                   <div className="overlay"></div>
-                  <span>Submit</span>
+                  <span>{isUpdate ? "Update" : "Post"}</span>
                 </button>
               </form>
             </div>

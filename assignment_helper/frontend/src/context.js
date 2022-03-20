@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import jwt_decode from "jwt-decode";
 
@@ -30,8 +30,12 @@ const AppProvider = ({ children }) => {
   const [assignmentSubject, setAssignmentSubject] = useState("");
   const [assignmentdescription, setAssignmentDescription] = useState("");
   const [assignment, setAssignment] = useState([]);
+  const [id, setId] = useState("");
+  const [isUpdate, setIsUpdate] = useState(false);  
 
-  const { id } = useParams();
+  const location = useLocation();
+  const { pathname } = location;
+  const splitLocation = pathname.split("/");
 
   let navigate = useNavigate();
 
@@ -171,15 +175,40 @@ const AppProvider = ({ children }) => {
       });
   };
 
+  const getAssignmentData = () => {
+    const requestOptions = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch(`/api/assignment/${parseInt(splitLocation[2])}`, requestOptions)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        setId(data.id);
+        setAssignmentTitle(data.title);
+        setAssignmentType(data.assignment_type);
+        setAssignmentSubject(data.subject);
+        setAssignmentFile("");
+        setAssignmentDescription(data.description);
+        setIsUpdate(true);
+      });
+  }
+  
   const updateAssignment = (e) => {
     e.preventDefault();
     const uploadData = new FormData();
+    uploadData.append('user', user.user_id);
+    uploadData.append('username', user.full_name);
     uploadData.append('title', assignmentTitle);
     uploadData.append('subject', assignmentSubject);
     uploadData.append('assignment_type', assignmentType);
     uploadData.append('assignment_file', assignmentFile[0]);
     uploadData.append('description', assignmentdescription);
-    axios.post(`/api/update-assignments/${id}`, uploadData)
+    axios.put(`/api/update-assignment/${parseInt(id)}/`, uploadData)
     .then((response) => {
         console.log(response);
         if (response.ok) {
@@ -190,8 +219,25 @@ const AppProvider = ({ children }) => {
           setMessage("All fields are required");
           setIsError(true);
         }
-      })
+      }
+    );
   };
+
+  const deleteAssignment = (e) => {
+    e.preventDefault();
+    const requestOptions = {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch(`/api/delete-assignment/${parseInt(splitLocation[2])}/`, requestOptions)
+      .then((response) => {
+        if (response.ok) {
+          setMessage("Assignment deleted successfully");
+          setIsSuccess(true);
+          return response.json();
+        }
+      })
+    };
 
 
   useEffect(() => {
@@ -237,6 +283,11 @@ const AppProvider = ({ children }) => {
         setAssignmentDescription,
         createAssignment,
         assignment,
+        updateAssignment,
+        getAssignmentData,
+        isUpdate, 
+        setIsUpdate,
+        deleteAssignment
       }}
     >
       {children}
