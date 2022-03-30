@@ -32,6 +32,7 @@ const AppProvider = ({ children }) => {
   const [assignment, setAssignment] = useState([]);
   const [id, setId] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);  
+  const [isAssignmentChanged, setIsAssignmentChanged] = useState(false);
 
   const location = useLocation();
   const { pathname } = location;
@@ -101,6 +102,7 @@ const AppProvider = ({ children }) => {
         setToken(data);
         setUser(jwt_decode(data.access));
         localStorage.setItem("token", JSON.stringify(data));
+        console.log("login here");
         navigate(`/upload-assignment`);
       });
   };
@@ -112,7 +114,6 @@ const AppProvider = ({ children }) => {
   };
 
   const updateToken = (e) => {
-    console.log("Updating...");
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -137,6 +138,7 @@ const AppProvider = ({ children }) => {
 
   const createAssignment = (e) => {
     e.preventDefault();
+    setIsAssignmentChanged(false);
     const uploadData = new FormData();
     uploadData.append('user', user.user_id);
     uploadData.append('username', user.full_name);
@@ -147,16 +149,19 @@ const AppProvider = ({ children }) => {
     uploadData.append('description', assignmentdescription);
     axios.post("/api/create-assignments/", uploadData)
     .then((response) => {
-        console.log(response);
         if (response.ok) {
-          setMessage("Assignment created successfully");
-          setIsSuccess(true);
           return response.json();
         } else {
           setMessage("All fields are required");
           setIsError(true);
         }
       })
+    .then((data) => {
+      setIsAssignmentChanged(true);
+      setMessage("Assignment created successfully");
+      setIsSuccess(true);
+      navigate(`/assignment`);
+    });
   };
 
   const getAssignments = () => {
@@ -187,7 +192,6 @@ const AppProvider = ({ children }) => {
         }
       })
       .then((data) => {
-        console.log(data);
         setId(data.id);
         setAssignmentTitle(data.title);
         setAssignmentType(data.assignment_type);
@@ -200,6 +204,7 @@ const AppProvider = ({ children }) => {
   
   const updateAssignment = (e) => {
     e.preventDefault();
+    setIsAssignmentChanged(false);
     const uploadData = new FormData();
     uploadData.append('user', user.user_id);
     uploadData.append('username', user.full_name);
@@ -210,21 +215,37 @@ const AppProvider = ({ children }) => {
     uploadData.append('description', assignmentdescription);
     axios.put(`/api/update-assignment/${parseInt(id)}/`, uploadData)
     .then((response) => {
-        console.log(response);
         if (response.ok) {
-          setMessage("Assignment updated successfully");
-          setIsSuccess(true);
           return response.json();
         } else {
           setMessage("All fields are required");
           setIsError(true);
         }
       }
+    )
+    .then((data) => {
+      setIsAssignmentChanged(true);
+      setMessage("Assignment updated successfully");
+      setIsSuccess(true);
+      navigate(`/assignment`);
+    }
     );
   };
 
+  // THIS IS FOR CLEARING THE FORM FIELDS WHILE CHANGING FROM UPDATE TO POST PAGE
+  const handleFormClear = () => {
+    setIsUpdate(false);
+    setAssignmentTitle("");
+    setAssignmentType("");
+    setAssignmentSubject("");
+    setAssignmentFile("");
+    setAssignmentDescription("");
+  };
+
+
   const deleteAssignment = (e) => {
     e.preventDefault();
+    setIsAssignmentChanged(false);
     const requestOptions = {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -232,8 +253,10 @@ const AppProvider = ({ children }) => {
     fetch(`/api/delete-assignment/${parseInt(splitLocation[2])}/`, requestOptions)
       .then((response) => {
         if (response.ok) {
+          setIsAssignmentChanged(true);
           setMessage("Assignment deleted successfully");
           setIsSuccess(true);
+          navigate(`/assignment`);
           return response.json();
         }
       })
@@ -242,7 +265,7 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     getAssignments();
-  }, []);
+  }, [isAssignmentChanged]);
 
   useEffect(() => {
     const fourMinutes = 1000 * 60 * 4;
@@ -287,7 +310,8 @@ const AppProvider = ({ children }) => {
         getAssignmentData,
         isUpdate, 
         setIsUpdate,
-        deleteAssignment
+        handleFormClear,
+        deleteAssignment,
       }}
     >
       {children}

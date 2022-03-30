@@ -7,7 +7,7 @@ yarn-error.log*
 lerna-debug.log*
 .env
 __pycache__
-db.sqlite3
+/db.sqlite3
 media
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

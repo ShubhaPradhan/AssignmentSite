@@ -5,10 +5,11 @@ import { useGlobalContext } from "../context";
 
 export const Nav = () => {
   const location = useLocation();
-  const { user, handleLogout } = useGlobalContext();
+  const { user, handleLogout, setIsUpdate, handleFormClear } = useGlobalContext();
   const { pathname } = location;
   const splitLocation = pathname.split("/");
 
+  
   if (window.location.pathname === "/login") return null;
 
   return (
@@ -37,7 +38,7 @@ export const Nav = () => {
                 : "nav-link"
             }
           >
-            <Link to="/upload-assignment">Contribute</Link>
+            <Link to="/upload-assignment" onClick={handleFormClear}>Contribute</Link>
           </li>
           <li
             className={

@@ -72,7 +72,6 @@ class CreateAssignmentView(APIView):
 
         assignment = Assignment(user=user, username=username, title=title, subject=subject, assignment_type=assignment_type, assignment_file=assignment_file, description=description)
         serializer = self.serializer_class(assignment)
-        print(serializer.data)
         assignment.save()     
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

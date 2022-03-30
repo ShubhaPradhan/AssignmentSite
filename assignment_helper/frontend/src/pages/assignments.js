@@ -11,7 +11,7 @@ const Assignment = () => {
   const [sortByType, setSortByType] = useState("");
   const [sortBySubject, setSortBySubject] = useState("");
 
-  const { user, assignment, updateAssignment } = useGlobalContext();
+  const { user, assignment, updateAssignment, issuccess, message } = useGlobalContext();
 
   // BECAUSE VAR_NAME IS CONFLICTING BELOW
   let userId = "";
@@ -21,6 +21,7 @@ const Assignment = () => {
 
   return (
     <section className="assignment main">
+      { issuccess ? <div className="messages">{message}</div> : null }
       {/* BANNER */}
       <div className="banner">
         <div className="top-content">
