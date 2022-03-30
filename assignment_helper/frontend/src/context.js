@@ -21,9 +21,7 @@ const AppProvider = ({ children }) => {
       : null
   );
   const [isloading, setIsLoading] = useState(false);
-  const [iserror, setIsError] = useState(false);
-  const [issuccess, setIsSuccess] = useState(false);
-  const [message, setMessage] = useState("");
+  const [alert, setAlert] = useState({ show: false, msg: '', type: '' });
   const [assignmentTitle, setAssignmentTitle] = useState("");
   const [assignmentType, setAssignmentType] = useState("");
   const [assignmentFile, setAssignmentFile] = useState("");
@@ -52,6 +50,10 @@ const AppProvider = ({ children }) => {
     setPassword(e.target.value);
   };
 
+  const showAlert = (show = false, type = '', msg = '') => {
+    setAlert({ show, type, msg });
+  };
+
   const handleUserRegistration = (e) => {
     e.preventDefault();
     const requestOptions = {
@@ -65,15 +67,14 @@ const AppProvider = ({ children }) => {
     };
     fetch("/api/users/", requestOptions).then((response) => {
       if (response.ok) {
-        setMessage("Account created successfully");
-        setIsSuccess(true);
+        showAlert(true, 'success', 'User created successfully');
       } else {
         if (response.statusText === "Conflict") {
-          setMessage("Account already exists");
-          setIsError(true);
+          showAlert(true, 'danger', 'User already exists');
+  
         } else {
-          setMessage("Invalid email or password");
-          setIsError(true);
+          showAlert(true, 'danger', 'All fields are required');
+  
         }
       }
     });
@@ -94,15 +95,13 @@ const AppProvider = ({ children }) => {
         if (response.ok) {
           return response.json();
         } else {
-          setMessage("Invalid email or password");
-          setIsError(true);
+          showAlert(true, 'danger', 'Invalid email or password');
         }
       })
       .then((data) => {
         setToken(data);
         setUser(jwt_decode(data.access));
         localStorage.setItem("token", JSON.stringify(data));
-        console.log("login here");
         navigate(`/upload-assignment`);
       });
   };
@@ -152,14 +151,12 @@ const AppProvider = ({ children }) => {
         if (response.ok) {
           return response.json();
         } else {
-          setMessage("All fields are required");
-          setIsError(true);
+          showAlert(true, 'danger', 'All fields are required');
         }
       })
     .then((data) => {
       setIsAssignmentChanged(true);
-      setMessage("Assignment created successfully");
-      setIsSuccess(true);
+      showAlert(true, 'success', 'Assignment created successfully.');
       navigate(`/assignment`);
     });
   };
@@ -218,15 +215,13 @@ const AppProvider = ({ children }) => {
         if (response.ok) {
           return response.json();
         } else {
-          setMessage("All fields are required");
-          setIsError(true);
+          setAlert({ show: true, type: 'danger', msg: 'All fields are required' });
         }
       }
     )
     .then((data) => {
       setIsAssignmentChanged(true);
-      setMessage("Assignment updated successfully");
-      setIsSuccess(true);
+      setAlert({ show: true, type: 'success', msg: 'Assignment updated successfully.' });
       navigate(`/assignment`);
     }
     );
@@ -254,8 +249,7 @@ const AppProvider = ({ children }) => {
       .then((response) => {
         if (response.ok) {
           setIsAssignmentChanged(true);
-          setMessage("Assignment deleted successfully");
-          setIsSuccess(true);
+          setAlert({ show: true, type: 'success', msg: 'Assignment deleted successfully.' });
           navigate(`/assignment`);
           return response.json();
         }
@@ -290,9 +284,9 @@ const AppProvider = ({ children }) => {
         handlePassword,
         token,
         user,
-        issuccess,
-        iserror,
-        message,
+        alert,
+        setAlert,
+        showAlert,
         isloading,
         assignmentTitle,
         assignmentType,

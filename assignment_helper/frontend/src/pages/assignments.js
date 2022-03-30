@@ -1,6 +1,7 @@
 import React from "react";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Alert from "../components/alert";
 
 import { useState } from "react";
 
@@ -11,7 +12,7 @@ const Assignment = () => {
   const [sortByType, setSortByType] = useState("");
   const [sortBySubject, setSortBySubject] = useState("");
 
-  const { user, assignment, updateAssignment, issuccess, message } = useGlobalContext();
+  const { user, assignment, updateAssignment, alert, setAlert, showAlert } = useGlobalContext();
 
   // BECAUSE VAR_NAME IS CONFLICTING BELOW
   let userId = "";
@@ -21,7 +22,7 @@ const Assignment = () => {
 
   return (
     <section className="assignment main">
-      { issuccess ? <div className="messages">{message}</div> : null }
+      { alert.show && <Alert {...alert} removeAlert={showAlert} list={assignment} /> }
       {/* BANNER */}
       <div className="banner">
         <div className="top-content">

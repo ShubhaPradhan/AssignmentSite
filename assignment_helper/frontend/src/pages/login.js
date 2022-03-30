@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useGlobalContext } from "../context";
+import Alert from "../components/alert";
 
 const Login = () => {
   const {
@@ -10,9 +11,10 @@ const Login = () => {
     handleFullName,
     handleEmail,
     handlePassword,
-    message,
-    issuccess,
-    iserror,
+    alert,
+    setAlert,
+    showAlert,
+    assignment,
   } = useGlobalContext();
 
   const [formValue, setFormValue] = useState("signin");
@@ -42,8 +44,7 @@ const Login = () => {
                   : handleUserLogin
               }
             >
-              {iserror ? <div className="messages">{message}</div> : null}
-              {issuccess ? <div className="messages">{message}</div> : null}
+              { alert.show && <Alert {...alert} removeAlert={showAlert} list={assignment} /> }
               <h3
                 className="form-title"
                 style={{ display: formValue === "register" ? "block" : "none" }}
